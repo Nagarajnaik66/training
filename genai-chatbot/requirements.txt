@@ -1,0 +1,15 @@
+streamlit
+langchain
+pinecone-client
+sentence-transformers
+unstructured[md,pdf,ppt,xl]
+python-docx
+pypandoc
+pytest
+python-magic-bin
+python-magic
+pyyaml
+torch
+transformers
+aiofiles
+asyncio

@@ -1,0 +1,15 @@
+pinecone:
+  api_key: your_pinecone_key
+  environment: us-west1-gcp
+  index_name: rag-chatbot
+
+huggingface:
+  model_name: google/flan-t5-large
+  embedding_model: sentence-transformers/all-MiniLM-L6-v2
+
+app:
+  chunk_size: 1000
+  chunk_overlap: 200
+  max_file_size: 100MB
+  cache_size: 10           # Number of recent conversations to cache
+  batch_size: 5            # Batch size for processing large datasets
