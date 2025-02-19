@@ -15,9 +15,9 @@ load_dotenv()
 # Pinecone configuration
 PINECONE_API_KEY = "pcsk_2zyKeU_2ZvxUD78Cxg1eRnooJXDYj1XBmsSN1qn8eDng6QirxtPQNgmm3UiFFtGktcBamq"
 PINECONE_ENV = "us-east-1"  # Change to the appropriate environment region
-PINECONE_INDEX_NAME = "index10"  # Specify the index name
-DIMENSION = 3072  # Change according to your embeddings model dimension
-DATA_PATH = "data"  # Path to the directory containing your PDF files
+PINECONE_INDEX_NAME = "index15"  # Specify the index name
+DIMENSION = 1152  # Change according to your embeddings model dimension
+DATA_PATH = "/workspaces/training/test/data"  # Path to the directory containing your PDF files
 
 # Initialize the MarkItDown converter
 md_converter = MarkItDown()
@@ -54,7 +54,8 @@ def get_huggingface_embeddings(text):
     # The embeddings are typically the last hidden state
     embeddings = outputs.last_hidden_state.mean(dim=1)  # Average pooling across tokens
     
-    return embeddings.squeeze().numpy()  # Convert the embeddings to a numpy array
+    return embeddings.squeeze().flatten().tolist()  # Convert to a flat list
+
 
 # Initialize Pinecone using the updated method
 pc = Pinecone(api_key=PINECONE_API_KEY)
@@ -75,7 +76,7 @@ if PINECONE_INDEX_NAME not in pc.list_indexes():
 index = pc.Index(PINECONE_INDEX_NAME)
 
 # Directory containing your documents
-docs_directory = "./data"
+docs_directory = "/workspaces/training/test/data"
 
 # Supported file extensions
 supported_extensions = ('.pdf', '.docx', '.xlsx', '.txt', '.pptx', '.csv', '.jpg', '.jpeg', '.png', '.mp3', '.html', '.json', '.xml', '.zip')
@@ -95,7 +96,7 @@ for filename in os.listdir(docs_directory):
             # You can now use these chunks for your RAG pipeline
             # Create unique IDs for each chunk and generate embeddings
             uuids = [str(uuid4()) for _ in range(len(chunks))]
-            vectors = [(uuid, get_huggingface_embeddings(doc.page_content)) for uuid, doc in zip(uuids, chunks)]
+            vectors = [(uuid, get_huggingface_embeddings(chunks)) for uuid, doc in zip(uuids, chunks)]
 
             # Insert vectors into Pinecone
             index.upsert(vectors=vectors)
